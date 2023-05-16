@@ -1,0 +1,29 @@
+# Visual Studio files
+.vs/
+*.suo
+*.user
+*.userprefs
+*.sln.docstates
+
+# Build output
+bin/
+obj/
+*.exe
+*.dll
+*.pdb
+
+# NuGet packages
+packages/
+
+# Editor and IDE files
+.vscode/
+*.swp
+.idea/
+
+# Logs and temporary files
+*.log
+*.tmp
+
+# Sensitive information
+appsettings.json
+secrets.json
