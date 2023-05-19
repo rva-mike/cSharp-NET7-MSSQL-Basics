@@ -1,112 +1,85 @@
 ﻿using System;
+using System.Data;
+using System.Text.RegularExpressions;
+using Dapper;
+using HelloWorld.Data;
+using HelloWorld.Models;
+using Microsoft.Data.SqlClient;
 
 namespace HelloWorld
 {
-    internal class Program
+
+
+    public class Program
     {
-        static void Main(string[] args)
+        public static void Main(string[] args)
         {
-            // Console.WriteLine("Hello Mike!");
 
-            // whole numbers  
-
-            // sbyte mySbyte = 127;
-            // sbyte mySecondSbyte = -128;
-            // byte myByte = 255;
-            // byte mySecondByte = 0;
-
-            // short myShort = -32768;
-            // short mySecondShort = 32767;
-            // ushort myUshort = 65535; 
-
-            // int myInt = 2147483647;
-            // int mySecondInt = -2147483648;
-
-            // long myLong = -9223372036854775808;
-            // long mySecondLong = 9223372036854775807;
-
-            // decimals 
-
-            // float myFloat = 0.751f;
-            // float mySecondFloat = 0.75f;
-
-            // double myDouble = 0.751;
-            // double mySecondDouble = 0.75d;
-
-            // decimal myDecimal = 0.751m;
-            // decimal mySecondDecimal = 0.75m;
-
-            // Console.WriteLine(myFloat - mySecondFloat);
-            // Console.WriteLine(myDouble - mySecondDouble);
-            // Console.WriteLine(myDecimal - mySecondDecimal);
-
-            // string
-
-            // string myString = "new string";
-            // string myStringWithSymbols = "!~@)(@#)(@*$()*#^^$%";
-            // Console.WriteLine(myStringWithSymbols);
-
-            // bool myBool = true;
-
-
-            // ARRAYS
-
-            string[] myGroceryArray = new string[2];
-
-            myGroceryArray[0] = "Guacamole";
-            myGroceryArray[1] = "Ice Cream";
-            Console.WriteLine(myGroceryArray[0]);
-            Console.WriteLine(myGroceryArray[1]);
+            DataContextDapper dapper = new DataContextDapper();
 
 
 
-            string[] mySecondGroceryArray = { "Apples", "Eggs" };
+            string sqlCommand = "SELECT GETDATE()";
 
-            // Console.WriteLine(mySecondGroceryArray[0]);
-            // Console.WriteLine(mySecondGroceryArray[1]);
+            DateTime rightNow = dapper.LoadDataSingle<DateTime>(sqlCommand);
 
-
-            // LIST
-
-            List<string> myGroceryList = new List<string>() { "Milk", "Cheese" };
-
-            // Console.WriteLine(myGroceryList[0]);
-            // Console.WriteLine(myGroceryList[1]);
-
-            myGroceryList.Add("Oranges");
-
-            // Console.WriteLine(myGroceryList[2]);
+            // Console.WriteLine(rightNow);
 
 
-            // IEnumerable
-
-            IEnumerable<string> myGroceryIEnumerable = myGroceryList;
-
-            Console.WriteLine(myGroceryIEnumerable.First());
-
-            string[,] myTwoDimensionalArray = new string[,] {
-                { "Apples", "Eggs" },
-                { "Milk", "Cheese" }
+            Computer myComputer = new Computer()
+            {
+                Motherboard = "Z690",
+                HasWifi = true,
+                HasLTE = false,
+                ReleaseDate = DateTime.Now,
+                Price = 943.87m,
+                VideoCard = "RTX 2060"
             };
 
-            Console.WriteLine(myTwoDimensionalArray[1, 1]);
+            string sql = @"INSERT INTO TutorialAppSchema.Computer (
+                Motherboard,
+                HasWifi,
+                HasLTE,
+                ReleaseDate,
+                Price,
+                VideoCard
+            ) VALUES ('" + myComputer.Motherboard
+                + "','" + myComputer.HasWifi
+                + "','" + myComputer.HasLTE
+                + "','" + myComputer.ReleaseDate
+                + "','" + myComputer.Price
+                + "','" + myComputer.VideoCard
+            + "')";
 
+            // Console.WriteLine(sql);
 
-            // Dictionary (key value pairs)
+            // int result = dapper.ExecuteSqlWithRowCount(sql);
+            bool result = dapper.ExecuteSql(sql);
 
-            Dictionary<string, string> myGroceryDictionary = new Dictionary<string, string> {
-                {"Cheese", "Dairy"}
-            };
+            // Console.WriteLine(result);
 
-            Console.WriteLine(myGroceryDictionary["Cheese"]);
+            string sqlSelect = @"
+            SELECT  
+                Computer.Motherboard,
+                Computer.HasWifi,
+                Computer.HasLTE,
+                Computer.ReleaseDate,
+                Computer.Price,
+                Computer.VideoCard
+            FROM TutorialAppSchema.Computer";
 
+            IEnumerable<Computer> computers = dapper.LoadData<Computer>(sqlSelect);
 
-            // Dictionary<string, string[]> myGroceryDictionaryArray = new Dictionary<string, string[]> {
-            //     {"Dairy", new string[]{"Cheese", "Milk", "Eggs"}}
-            // };
-
-            // Console.WriteLine(myGroceryDictionaryArray["Dairy"][2]);
+            foreach(Computer singleComputer in computers) {
+                Console.WriteLine("'" + myComputer.Motherboard
+                + "','" + myComputer.HasWifi
+                + "','" + myComputer.HasLTE
+                + "','" + myComputer.ReleaseDate
+                + "','" + myComputer.Price
+                + "','" + myComputer.VideoCard + "'");
+            }
 
         }
+
     }
 }
