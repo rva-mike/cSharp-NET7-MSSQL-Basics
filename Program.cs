@@ -16,7 +16,7 @@ namespace HelloWorld
         {
 
             DataContextDapper dapper = new DataContextDapper();
-
+            DataContextEF entityFramework = new DataContextEF();
 
 
             string sqlCommand = "SELECT GETDATE()";
@@ -35,6 +35,10 @@ namespace HelloWorld
                 Price = 943.87m,
                 VideoCard = "RTX 2060"
             };
+
+            entityFramework.Add(myComputer);
+            entityFramework.SaveChanges();
+
 
             string sql = @"INSERT INTO TutorialAppSchema.Computer (
                 Motherboard,
@@ -60,6 +64,7 @@ namespace HelloWorld
 
             string sqlSelect = @"
             SELECT  
+                Computer.ComputerId,
                 Computer.Motherboard,
                 Computer.HasWifi,
                 Computer.HasLTE,
@@ -70,14 +75,39 @@ namespace HelloWorld
 
             IEnumerable<Computer> computers = dapper.LoadData<Computer>(sqlSelect);
 
-            foreach(Computer singleComputer in computers) {
-                Console.WriteLine("'" + myComputer.Motherboard
-                + "','" + myComputer.HasWifi
-                + "','" + myComputer.HasLTE
-                + "','" + myComputer.ReleaseDate
-                + "','" + myComputer.Price
-                + "','" + myComputer.VideoCard + "'");
+            foreach (Computer singleComputer in computers)
+            {
+                Console.WriteLine("'" + singleComputer.ComputerId
+                + "','" + singleComputer.Motherboard
+                + "','" + singleComputer.HasWifi
+                + "','" + singleComputer.HasLTE
+                + "','" + singleComputer.ReleaseDate
+                + "','" + singleComputer.Price
+                + "','" + singleComputer.VideoCard + "'");
             }
+
+
+
+            IEnumerable<Computer>? computersEf = entityFramework.Computer?.ToList<Computer>();
+
+            if (computersEf != null)
+            {
+
+                foreach (Computer singleComputer in computersEf)
+                {
+                    Console.WriteLine("'" + singleComputer.ComputerId
+                    + "','" + singleComputer.Motherboard
+                    + "','" + singleComputer.HasWifi
+                    + "','" + singleComputer.HasLTE
+                    + "','" + singleComputer.ReleaseDate
+                    + "','" + singleComputer.Price
+                    + "','" + singleComputer.VideoCard + "'");
+                }
+
+            }
+
+
+
 
         }
 
